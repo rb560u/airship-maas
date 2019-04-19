@@ -53,6 +53,22 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       initContainers:
 {{ tuple $envAll "rack_controller" $mounts_maas_rack_init | include "helm-toolkit.snippets.kubernetes_entrypoint_init_container" | indent 8 }}
+        - name: maas-rack-perms
+          image: {{ .Values.images.tags.maas_rack }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+          command:
+            - /tmp/start.sh
+          volumeMounts:
+            - name: rackd-state
+              mountPath: /etc/maas
+              subPath: etc
+              readOnly: false
+            - mountPath: /tmp
+              name: pod-tmp
+            - name: maas-bin
+              mountPath: /tmp/start.sh
+              subPath: start.sh
+              readOnly: true
       containers:
         - name: maas-rack
           image: {{ .Values.images.tags.maas_rack }}
@@ -72,8 +88,6 @@ spec:
                   name: {{ .Values.conf.maas.credentials.secret.name }}
                   key: 'token'
 {{ tuple $envAll $envAll.Values.pod.resources.maas_rack | include "helm-toolkit.snippets.kubernetes_resources" | indent 10 }}
-          command:
-            - /tmp/start.sh
           securityContext:
             capabilities:
               add:
@@ -83,6 +97,7 @@ spec:
                 - 'SYS_PTRACE'
                 - 'SYS_RESOURCE'
                 - 'SYS_TIME'
+            runAsUser: 0
           readinessProbe:
             initialDelaySeconds: 60
             periodSeconds: 300
