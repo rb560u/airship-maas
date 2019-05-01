@@ -16,9 +16,4 @@
 
 set -ex
 
-# show env
-env > /tmp/env
-
-chsh -s /bin/bash maas
-
 exec /sbin/init --log-target=console 3>&1
