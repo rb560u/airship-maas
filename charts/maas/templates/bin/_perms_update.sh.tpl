@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2017 The Openstack-Helm Authors.
+# Copyright 2019 The Openstack-Helm Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,19 @@ set -ex
 # show env
 env > /tmp/env
 
-chsh -s /bin/bash maas
+# Ensure PVC volumes have correct ownership
 
-exec /sbin/init --log-target=console 3>&1
+chown maas:maas ~maas/
+chown maas:maas /etc/maas
+
+# MAAS must be able to ssh to libvirt hypervisors
+# to control VMs
+
+if [[ -r ~maas/id_rsa ]]
+then
+  mkdir -p ~maas/.ssh
+  cp ~maas/id_rsa ~maas/.ssh/
+  chown -R maas:maas ~maas/.ssh/
+  chmod 700 ~maas/.ssh
+  chmod 600 ~maas/.ssh/*
+fi

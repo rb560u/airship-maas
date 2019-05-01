@@ -33,6 +33,8 @@ data:
 {{ tuple "bin/_job-readiness.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
   start.sh: |
 {{ tuple "bin/_start.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  perms_update.sh: |
+{{ tuple "bin/_perms_update.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
   export-api-key.sh: |
 {{ tuple "bin/_export-api-key.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
   register-rack-controller.sh: |
