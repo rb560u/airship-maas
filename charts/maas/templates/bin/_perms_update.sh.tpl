@@ -23,6 +23,8 @@ env > /tmp/env
 
 chown maas:maas ~maas/
 chown maas:maas /etc/maas
+chown -R maas:maas /sys/fs/cgroup/systemd/ 
+chmod -R 777 /sys/fs/cgroup/systemd/
 
 # MAAS must be able to ssh to libvirt hypervisors
 # to control VMs

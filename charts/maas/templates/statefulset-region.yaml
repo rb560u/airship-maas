@@ -67,6 +67,7 @@ spec:
             tcpSocket:
               port: {{ tuple "maas_region" "podport" "region_api" $envAll | include "helm-toolkit.endpoints.endpoint_port_lookup" }}
           securityContext:
+            runAsUser: 0
             capabilities:
               add:
                 - 'SYS_ADMIN'
@@ -87,6 +88,7 @@ spec:
               name: pod-run-lock
             - mountPath: /tmp
               name: pod-tmp
+              readOnly: false
             - name: maas-region-secret
               mountPath: /var/lib/maas/secret
               subPath: REGION_SECRET
@@ -136,6 +138,7 @@ spec:
           emptyDir: {}
         - name: pod-tmp
           emptyDir: {}
+          readOnly: false
         - name: maas-etc
           configMap:
             name: maas-etc

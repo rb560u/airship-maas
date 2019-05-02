@@ -59,16 +59,24 @@ spec:
           command:
             - /tmp/perms_update.sh
           volumeMounts:
+            - mountPath: /sys/fs/cgroup
+              name: host-sys-fs-cgroup
+              readOnly: false
             - name: rackd-state
               mountPath: /etc/maas
               subPath: etc
               readOnly: false
             - mountPath: /tmp
               name: pod-tmp
+              readOnly: false
             - name: maas-bin
               mountPath: /tmp/perms_update.sh
               subPath: perms_update.sh
-              readOnly: true
+              readOnly: false
+            - name: maas-bin
+              mountPath: /tmp/start.sh
+              subPath: start.sh
+              readOnly: false
       containers:
         - name: maas-rack
           image: {{ .Values.images.tags.maas_rack }}
@@ -112,13 +120,14 @@ spec:
           volumeMounts:
             - mountPath: /sys/fs/cgroup
               name: host-sys-fs-cgroup
-              readOnly: true
+              readOnly: false
             - mountPath: /run
               name: pod-run
             - mountPath: /run/lock
               name: pod-run-lock
             - mountPath: /tmp
               name: pod-tmp
+              readOnly: false
             - mountPath: /host_cloud-init
               name: host-cloud-init
               readOnly: true
