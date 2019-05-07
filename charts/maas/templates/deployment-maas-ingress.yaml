@@ -199,7 +199,7 @@ spec:
             capabilities:
               add:
                 - 'NET_ADMIN'
-            runAsUser: 0
+            runAsUser: 33
           command:
             - /bin/init
           env:
