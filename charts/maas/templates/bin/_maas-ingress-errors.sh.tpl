@@ -21,9 +21,9 @@ COMMAND="${@:-start}"
 if [ "x${COMMAND}" == "xstart" ]; then
   if [[ -z "${BIND_PORT}" ]]
   then
-    exec /server
+    exec /tmp/server
   else
-    exec /server -port ${BIND_PORT}
+    exec /tmp/server -port ${BIND_PORT}
   fi
 elif [ "x${COMMAND}" == "xstop" ]; then
   kill -TERM 1

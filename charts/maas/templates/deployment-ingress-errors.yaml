@@ -39,11 +39,26 @@ spec:
       nodeSelector:
         {{ .Values.labels.rack.node_selector_key }}: {{ .Values.labels.rack.node_selector_value }}
       dnsPolicy: ClusterFirst
+      initContainers:
+{{ tuple $envAll "error_pages" list | include "helm-toolkit.snippets.kubernetes_entrypoint_init_container" | indent 8 }}
+        - name: maas-ingress-error-pages-perms
+          image: {{ .Values.images.tags.error_pages }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+{{ tuple $envAll $envAll.Values.pod.resources.maas_ingress_errors | include "helm-toolkit.snippets.kubernetes_resources" | indent 10 }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - cp /server /tmp;
+              chown nobody:nobody /tmp/server;
+          volumeMounts:
+            - name: pod-tmp
+              mountPath: /tmp
       containers:
         - name: maas-ingress-errors
           image: {{ .Values.images.tags.error_pages }}
           imagePullPolicy: {{ .Values.images.pull_policy }}
 {{ tuple $envAll $envAll.Values.pod.resources.maas_ingress_errors | include "helm-toolkit.snippets.kubernetes_resources" | indent 10 }}
+          securityContext:
+            runAsUser: 99
           command:
             - /tmp/maas-ingress-errors.sh
             - start
@@ -55,9 +70,13 @@ spec:
               name: maas-bin
               subPath: maas-ingress-errors
               readOnly: true
+            - name: pod-tmp
+              mountPath: /tmp
       volumes:
         - name: maas-bin
           configMap:
             name: maas-bin
             defaultMode: 0555
+        - name: pod-tmp
+          emptyDir: {}
 {{- end }}
